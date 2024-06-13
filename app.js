@@ -1,9 +1,9 @@
 // To initialize and get a reference to Firestore Service
 import { initializeApp } from "firebase/app";
-import { getDocs, getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import "dotenv/config";
 // To add Data
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, getDocs, doc } from "firebase/firestore";
 
 // Initialize Cloud Firestore
 const firebaseConfig = {
@@ -25,6 +25,7 @@ const db = getFirestore(app);
 
 
 // Add Data
+// Will auto-generate an ID
 const addData = async () => {
     try {
         const docRef = await addDoc(collection(db, "users"), {
@@ -34,6 +35,7 @@ const addData = async () => {
             born: 1912
         });
         console.log("Document written with ID: ", docRef.id);
+        console.log("The document: ", docRef);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
@@ -41,6 +43,39 @@ const addData = async () => {
 
 addData();
 
+
+// Set Doc
+// Creates or overwrites a single document. 
+const setADoc = async () => {
+    try {
+        const docRef = await setDoc(doc(db, "cities", "LA"), {
+            name: "Los Angeles",
+            state: "CA",
+            country: "USA"
+        });
+        console.log("Document set with ID: ");
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
+}
+
+setADoc();
+
+// Set Doc
+// To specify that data should be merged and not overwritten
+// For documents containing maps - specifying a set with a field containing an empty map 
+// will overwrite the target document's map field.
+const setDocMerge = async () => {
+    try {
+        const cityRef = doc(db, 'cities', 'LA');
+        const docRef = await setDoc(cityRef, { cool: true }, { merge: true});
+        console.log("Document data was merged with ID: ");
+    } catch (e) {
+        console.error("Error merging with setDoc: ", e);
+    }
+}
+
+setDocMerge();
 
 // Read Data
 const readData = async () => {
@@ -51,3 +86,5 @@ const readData = async () => {
 }
 
 readData();
+
+// Se
